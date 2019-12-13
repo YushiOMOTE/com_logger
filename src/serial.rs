@@ -1,51 +1,47 @@
-use x86_64::instructions::port::Port;
+use core::fmt;
+use uart_16550::SerialPort;
 
-pub struct Serial {
-    ports: [Port<u8>; 8],
-}
+/// Serial port driver which implements [`core::fmt::Write`][].
+///
+/// ```rust,no_run
+/// use com_logger::Serial;
+///
+/// fn main() {
+///    // Setup COM1 serial port.
+///    let mut s = Serial::new(0x3f8);
+///    s.init();
+///
+///    // Write the single byte to the serial port.
+///    s.write(b'P');
+///
+///    // Write the string to the serial port.
+///    core::fmt::write(&mut s, format_args!("Hello {}", 0xdead));
+/// }
+/// ```
+pub struct Serial(SerialPort);
 
 impl Serial {
-    pub fn new() -> Self {
-        let mut ports = [
-            Port::new(0x3f8),
-            Port::new(0x3f9),
-            Port::new(0x3fa),
-            Port::new(0x3fb),
-            Port::new(0x3fc),
-            Port::new(0x3fd),
-            Port::new(0x3fe),
-            Port::new(0x3ff),
-        ];
-
-        Self { ports }
+    /// Create the driver instance for the specified base address.
+    pub fn new(base: u16) -> Self {
+        Self(unsafe { SerialPort::new(base) })
     }
 
+    /// Initialize the serial port.
     pub fn init(&mut self) {
-        unsafe {
-            self.ports[1].write(0x00);
-            self.ports[3].write(0x80);
-            self.ports[0].write(0x03);
-            self.ports[1].write(0x00);
-            self.ports[3].write(0x03);
-            self.ports[2].write(0xc7);
-            self.ports[4].write(0x0b);
-        }
+        self.0.init();
     }
 
-    pub fn read(&mut self) -> Option<u8> {
-        unsafe {
-            if self.ports[5].read() & 0x01 != 0 {
-                Some(self.ports[0].read())
-            } else {
-                None
-            }
-        }
-    }
-
+    /// Write a single byte to the serial port.
     pub fn write(&mut self, d: u8) {
-        unsafe {
-            while self.ports[5].read() & 0x20 == 0 {}
-            self.ports[0].write(d);
+        self.0.send(d);
+    }
+}
+
+impl fmt::Write for Serial {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        for b in s.bytes() {
+            self.0.send(b);
         }
+        Ok(())
     }
 }

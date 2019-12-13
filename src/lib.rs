@@ -1,44 +1,45 @@
+//!
+//! `com_logger` is a logger through COM port.
+//!
+//! This library is `no_std`, and doesn't rely on `alloc`.
+//!
+//! ```rust,no_run
+//! use log::*;
+//!
+//! fn main() {
+//!    com_logger::init();
+//!
+//!    info!("Hello");
+//! }
+//! ```
+//!
+//! The serial port base address and logging level filter can be configured.
+//!
+//! ```rust,no_run
+//! use log::*;
+//!
+//! fn main() {
+//!    com_logger::builder()
+//!        .base(0x2f8)                  // Use COM2 port
+//!        .filter(LevelFilter::Debug)   // Print debug log
+//!        .setup();
+//!
+//!    debug!("Hello");
+//! }
+//! ```
+
 #![no_std]
+#![cfg_attr(feature = "readme", feature(external_doc))]
+#![warn(missing_docs)]
 
-extern crate alloc;
+#[cfg_attr(feature = "readme", doc(include = "../README.md"))]
+type _Readme = ();
 
-pub mod serial;
+/// The module for the logger.
+mod logger;
 
-use crate::serial::Serial;
-use log::*;
+/// The module for the serial port driver.
+mod serial;
 
-pub struct Logger;
-
-impl log::Log for Logger {
-    fn enabled(&self, _m: &Metadata) -> bool {
-        true
-    }
-
-    fn log(&self, record: &Record) {
-        let msg = alloc::format!(
-            "{:>8}: {} ({}, {}:{})\n",
-            record.level(),
-            record.args(),
-            record.target(),
-            record.file().unwrap_or("<unknown>"),
-            record.line().unwrap_or(0),
-        );
-
-        let mut s = Serial::new();
-        for b in msg.bytes() {
-            s.write(b);
-        }
-    }
-
-    fn flush(&self) {}
-}
-
-pub fn init() {
-    init_with_filter(LevelFilter::Debug);
-}
-
-pub fn init_with_filter(filter: LevelFilter) {
-    Serial::new().init();
-    set_logger(&Logger).unwrap();
-    set_max_level(filter);
-}
+pub use crate::logger::{builder, init, init_with_filter, Builder};
+pub use crate::serial::Serial;

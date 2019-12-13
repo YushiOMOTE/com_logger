@@ -1,9 +1,13 @@
 [package]
-name = "comlog"
+name = "com_logger"
 version = "0.1.0"
 authors = ["Yushi OMOTE <yushiomote@gmail.com>"]
 edition = "2018"
 
+[features]
+default = []
+readme = []
+
 [dependencies]
-x86_64 = "0.8"
+uart_16550 = "0.2"
 log = { version = "0.4", default-features = false }
