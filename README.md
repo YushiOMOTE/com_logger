@@ -1,5 +1,10 @@
 # com_logger
 
+[![Latest version](https://img.shields.io/crates/v/com_logger.svg)](https://crates.io/crates/com_logger)
+[![Documentation](https://docs.rs/com_logger/badge.svg)](https://docs.rs/com_logger)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Actions Status](https://github.com/YushiOMOTE/com_logger/workflows/Rust/badge.svg)](https://github.com/YushiOMOTE/com_logger/actions)
+
 Serial port logger through COM ports.
 
 * Doesn't require `std` (`no_std`)
