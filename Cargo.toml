@@ -3,6 +3,12 @@ name = "com_logger"
 version = "0.1.0"
 authors = ["Yushi OMOTE <yushiomote@gmail.com>"]
 edition = "2018"
+description = "Serial port logger through COM ports"
+homepage = "https://github.com/yushiomote/com_logger"
+repository = "https://github.com/yushiomote/com_logger"
+documentation = "https://docs.rs/com_logger"
+license = "MIT"
+readme = "README.md"
 
 [features]
 default = []
