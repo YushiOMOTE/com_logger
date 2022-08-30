@@ -1,6 +1,6 @@
 [package]
 name = "com_logger"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Yushi OMOTE <yushiomote@gmail.com>"]
 edition = "2018"
 description = "Serial port logger through COM ports"
