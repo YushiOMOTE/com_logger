@@ -10,10 +10,6 @@ documentation = "https://docs.rs/com_logger"
 license = "MIT"
 readme = "README.md"
 
-[features]
-default = []
-readme = []
-
 [dependencies]
 uart_16550 = "0.2"
 log = { version = "0.4", default-features = false }
