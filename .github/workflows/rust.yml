@@ -7,12 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Build (Stable)
+        run: cargo build --verbose
+      - name: Test (Stable)
+        run: cargo build --verbose
       - name: Install nightly
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           override: true
-      - name: Build
-        run: cargo build --verbose --features readme
-      - name: Test
-        run: cargo test --verbose --features readme
+      - name: Build (Nightly)
+        run: cargo build --verbose
+      - name: Test (Nightly)
+        run: cargo test --verbose
