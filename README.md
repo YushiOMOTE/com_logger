@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Actions Status](https://github.com/YushiOMOTE/com_logger/workflows/Rust/badge.svg)](https://github.com/YushiOMOTE/com_logger/actions)
 
-Serial port logger through COM ports.
+Serial port logger through [COM ports](https://en.wikipedia.org/wiki/COM_(hardware_interface)).
 
 * Doesn't require `std` (`no_std`)
 * Doesn't require `alloc`
