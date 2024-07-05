@@ -23,9 +23,9 @@ impl log::Log for Logger {
         let _ = write(
             &mut serial,
             format_args!(
-                "{:<5} [{}] {}\n\0",
-                record.level().to_string(),
-                record.target(),
+                "[{}  {}] {}\n\0",
+                record.level(),
+                record.module_path(),
                 record.args()
             ),
         );
