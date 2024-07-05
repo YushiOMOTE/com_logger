@@ -1,17 +1,13 @@
 use crate::serial::Serial;
-use core::{
-    fmt::write,
-    format_args,
-    sync::atomic::{AtomicU16, Ordering},
-};
+use core::{fmt::write, format_args};
 use log::*;
 use spin::Mutex;
 
 const COM1_PORT: u16 = 0x3f8;
 
-static LOGGER: Mutex<Logger> = Mutex::new(Logger(AtomicU16::new(COM1_PORT)));
+static LOGGER: Logger = Logger(Mutex::new(COM1_PORT));
 
-struct Logger(AtomicU16);
+struct Logger(Mutex<u16>);
 
 impl log::Log for Logger {
     fn enabled(&self, _m: &Metadata) -> bool {
@@ -19,7 +15,8 @@ impl log::Log for Logger {
     }
 
     fn log(&self, record: &Record) {
-        let mut serial = Serial::new(self.0.load(Ordering::Relaxed));
+        let port = self.0.lock();
+        let mut serial = Serial::new(port);
 
         let _ = write(
             &mut serial,
@@ -36,7 +33,8 @@ impl log::Log for Logger {
 }
 
 fn set_logger_base(base: u16) {
-    LOGGER.lock().0.store(base, Ordering::Relaxed);
+    let mut data = LOGGER.0.lock();
+    *data = base;
 }
 
 /// The builder for a serial port logger.
@@ -76,8 +74,7 @@ impl Builder {
         // Update base address of logger
         set_logger_base(self.base);
 
-        let logger = *LOGGER.lock();
-        set_logger(&logger).unwrap();
+        set_logger(&LOGGER).unwrap();
         set_max_level(self.filter);
     }
 }
