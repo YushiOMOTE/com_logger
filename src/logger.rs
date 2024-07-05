@@ -76,7 +76,7 @@ impl Builder {
         // Update base address of logger
         set_logger_base(self.base);
 
-        set_logger(*LOGGER.lock()).unwrap();
+        set_logger(&*LOGGER.lock()).unwrap();
         set_max_level(self.filter);
     }
 }
