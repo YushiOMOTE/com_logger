@@ -1,4 +1,5 @@
 use core::fmt;
+use spin::Mutex;
 use uart_16550::SerialPort;
 
 /// Serial port driver which implements [`core::fmt::Write`][].
@@ -18,29 +19,37 @@ use uart_16550::SerialPort;
 ///    core::fmt::write(&mut s, format_args!("Hello {}", 0xdead));
 /// }
 /// ```
-pub struct Serial(SerialPort);
+pub struct Serial {
+    port: Mutex<SerialPort>,
+}
 
 impl Serial {
     /// Create the driver instance for the specified base address.
     pub fn new(base: u16) -> Self {
-        Self(unsafe { SerialPort::new(base) })
+        let port = unsafe { SerialPort::new(base) };
+
+        Self {
+            port: Mutex::new(port),
+        }
     }
 
     /// Initialize the serial port.
     pub fn init(&mut self) {
-        self.0.init();
+        self.port.lock().init();
     }
 
     /// Write a single byte to the serial port.
     pub fn write(&mut self, d: u8) {
-        self.0.send(d);
+        self.port.lock().send(d);
     }
 }
 
 impl fmt::Write for Serial {
     fn write_str(&mut self, s: &str) -> fmt::Result {
+        let mut port = self.port.lock();
+
         for b in s.bytes() {
-            self.0.send(b);
+            port.send(b);
         }
         Ok(())
     }
