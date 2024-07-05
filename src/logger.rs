@@ -8,32 +8,7 @@ use log::*;
 
 const COM1_PORT: u16 = 0x3f8;
 
-struct Mutex<T> {
-    lock: AtomicUsize,
-    data: T,
-}
-
-impl<T> Mutex<T> {
-    fn new(data: T) -> Self {
-        Mutex {
-            lock: AtomicUsize::new(0),
-            data,
-        }
-    }
-
-    fn lock(&self) -> &T {
-        while self.lock.swap(1, Ordering::Acquire) != 0 {
-            spin_loop_hint();
-        }
-        &self.data
-    }
-
-    fn unlock(&self) {
-        self.lock.store(0, Ordering::Release);
-    }
-}
-
-static LOGGER: Mutex<Logger> = Mutex::new(Logger(AtomicU16::new(COM1_PORT)));
+static LOGGER: Logger = Logger(AtomicU16::new(COM1_PORT));
 
 struct Logger(AtomicU16);
 
