@@ -1,4 +1,5 @@
 use crate::serial::Serial;
+use core::sync::atomic::{spin_loop_hint, AtomicUsize, Ordering};
 use core::{
     fmt::write,
     format_args,
@@ -8,9 +9,34 @@ use log::*;
 
 const COM1_PORT: u16 = 0x3f8;
 
-static LOGGER: Logger = Logger(AtomicU16::new(COM1_PORT));
+static LOGGER: Logger = Mutex::new(Serial::new(COM1_PORT));
 
-struct Logger(AtomicU16);
+struct Mutex<T> {
+    lock: AtomicUsize,
+    data: T,
+}
+
+impl<T> Mutex<T> {
+    fn new(data: T) -> Self {
+        Mutex {
+            lock: AtomicUsize::new(0),
+            data,
+        }
+    }
+
+    fn lock(&self) -> &T {
+        while self.lock.swap(1, Ordering::Acquire) != 0 {
+            spin_loop_hint();
+        }
+        &self.data
+    }
+
+    fn unlock(&self) {
+        self.lock.store(0, Ordering::Release);
+    }
+}
+
+struct Logger(Mutex<Serial>);
 
 impl log::Log for Logger {
     fn enabled(&self, _m: &Metadata) -> bool {
@@ -18,7 +44,7 @@ impl log::Log for Logger {
     }
 
     fn log(&self, record: &Record) {
-        let mut serial = Serial::new(self.0.load(Ordering::Relaxed));
+        let serial = self.0.lock();
 
         let _ = write(
             &mut serial,
