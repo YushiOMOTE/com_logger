@@ -9,7 +9,7 @@ use log::*;
 
 const COM1_PORT: u16 = 0x3f8;
 
-static LOGGER: Logger = Mutex::new(Serial::new(COM1_PORT));
+static LOGGER: Logger = Serial::new(COM1_PORT);
 
 struct Mutex<T> {
     lock: AtomicUsize,
