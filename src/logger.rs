@@ -22,13 +22,11 @@ impl log::Log for Logger {
 
         let _ = write(
             &mut serial,
-            format_args!(
-                "{:>8}: {} ({}, {}:{})\n",
-                record.level(),
-                record.args(),
+            format!(
+                "{:<5} [{}] {}\n\0",
+                record.level().to_string(),
                 record.target(),
-                record.file().unwrap_or("<unknown>"),
-                record.line().unwrap_or(0),
+                record.args()
             ),
         );
     }
