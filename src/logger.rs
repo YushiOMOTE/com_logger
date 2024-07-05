@@ -16,7 +16,7 @@ impl log::Log for Logger {
 
     fn log(&self, record: &Record) {
         let port = self.0.lock();
-        let mut serial = Serial::new(port);
+        let mut serial = Serial::new(*port);
 
         let _ = write(
             &mut serial,
