@@ -25,7 +25,7 @@ impl log::Log for Logger {
             format_args!(
                 "[{}  {}] {}\n\0",
                 record.level(),
-                record.module_path(),
+                record.module_path().unwrap_or(record.target()),
                 record.args()
             ),
         );
