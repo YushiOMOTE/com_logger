@@ -5,10 +5,11 @@ use core::{
     sync::atomic::{AtomicU16, Ordering},
 };
 use log::*;
+use spin::Mutex;
 
 const COM1_PORT: u16 = 0x3f8;
 
-static LOGGER: Logger = Logger(AtomicU16::new(COM1_PORT));
+static LOGGER: Mutex<Logger> = Mutex::new(Logger(AtomicU16::new(COM1_PORT)));
 
 struct Logger(AtomicU16);
 
@@ -35,7 +36,7 @@ impl log::Log for Logger {
 }
 
 fn set_logger_base(base: u16) {
-    LOGGER.0.store(base, Ordering::Relaxed);
+    LOGGER.lock().0.store(base, Ordering::Relaxed);
 }
 
 /// The builder for a serial port logger.
@@ -75,7 +76,7 @@ impl Builder {
         // Update base address of logger
         set_logger_base(self.base);
 
-        set_logger(&LOGGER).unwrap();
+        set_logger(&LOGGER.lock()).unwrap();
         set_max_level(self.filter);
     }
 }
