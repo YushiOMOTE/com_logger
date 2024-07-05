@@ -44,7 +44,7 @@ impl log::Log for Logger {
     }
 
     fn log(&self, record: &Record) {
-        let serial = self.0.lock();
+        let mut serial = self.0.lock();
 
         let _ = write(
             &mut serial,
@@ -61,7 +61,7 @@ impl log::Log for Logger {
 }
 
 fn set_logger_base(base: u16) {
-    LOGGER.0.store(base, Ordering::Relaxed);
+    LOGGER.0.lock().store(base, Ordering::Relaxed);
 }
 
 /// The builder for a serial port logger.
