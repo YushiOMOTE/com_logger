@@ -1,0 +1,30 @@
+name: Main
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        rust: [stable, beta, nightly]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@master
+      - name: Install rust
+        run: |
+          rustup update ${{ matrix.rust }} --no-self-update
+          rustup default ${{ matrix.rust }}
+      - run: cargo test --verbose
+
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install rust
+        run: |
+          rustup update stable --no-self-update
+          rustup default stable
+      - run: cargo fmt -- --check
