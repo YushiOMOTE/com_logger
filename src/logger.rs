@@ -21,10 +21,12 @@ impl log::Log for Logger {
         let _ = write(
             &mut serial,
             format_args!(
-                "[{}  {}] {}\n\0",
+                "{:>8}: {} ({}, {}:{})\n",
                 record.level(),
-                record.module_path().unwrap_or(record.target()),
-                record.args()
+                record.args(),
+                record.target(),
+                record.file().unwrap_or("<unknown>"),
+                record.line().unwrap_or(0),
             ),
         );
     }
