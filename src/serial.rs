@@ -5,6 +5,7 @@ use uart_16550::SerialPort;
 ///
 /// ```rust,no_run
 /// use com_logger::Serial;
+/// use core::fmt::Write;
 ///
 /// fn main() {
 ///    // Setup COM1 serial port.
@@ -15,7 +16,7 @@ use uart_16550::SerialPort;
 ///    s.write(b'P');
 ///
 ///    // Write the string to the serial port.
-///    core::fmt::write(&mut s, format_args!("Hello {}", 0xdead));
+///    writeln!(&mut s, "Hello {}", 0xdead);
 /// }
 /// ```
 pub struct Serial(SerialPort);
