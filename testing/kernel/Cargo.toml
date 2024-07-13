@@ -1,0 +1,24 @@
+[package]
+name = "kernel"
+version = "0.1.0"
+authors = ["Yushi OMOTE <yushiomote@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+bootloader_api = "0.11.7"
+com_logger = { path = "../../" }
+log = "0.4.22"
+x86_64 = "0.15.1"
+
+[[bin]]
+name = "basic"
+path = "src/basic.rs"
+
+[[bin]]
+name = "format"
+path = "src/format.rs"
+
+[[bin]]
+name = "multi"
+path = "src/multi.rs"
+
