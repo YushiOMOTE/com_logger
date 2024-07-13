@@ -40,9 +40,6 @@ jobs:
           rustup target add x86_64-unknown-none
           rustup component add rust-src
           rustup component add llvm-tools-preview
-      - name: Install bootimage
-        run: |
-          cargo install bootimage
       - run: cargo test --verbose
 
   fmt:
