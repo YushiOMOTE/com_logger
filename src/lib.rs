@@ -8,5 +8,5 @@ mod logger;
 /// The module for the serial port driver.
 mod serial;
 
-pub use crate::logger::{builder, init, init_with_filter, Builder};
+pub use crate::logger::{builder, init, init_with_filter, Builder, Formatter};
 pub use crate::serial::Serial;
