@@ -129,6 +129,7 @@ impl Builder {
 ///    com_logger::builder()
 ///        .base(0x2f8)                  // Use COM2 port
 ///        .filter(LevelFilter::Debug)   // Print debug log
+///        .formatter(|buf, record| writeln!(buf, "{}", record.args())) // Define own format
 ///        .setup();
 ///
 ///    debug!("Hello");
